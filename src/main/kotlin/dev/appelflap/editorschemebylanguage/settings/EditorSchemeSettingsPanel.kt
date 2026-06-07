@@ -62,13 +62,16 @@ class EditorSchemeSettingsPanel {
 
     fun isEnabledSelected(): Boolean = enabledCheckBox.isSelected
 
-    fun rules(): List<SchemeRule> {
+    fun rulesSnapshot(): List<SchemeRule> =
+        tableModel.rules()
+
+    fun commitAndRules(): List<SchemeRule> {
         commitActiveTableEdit()
-        return tableModel.rules()
+        return rulesSnapshot()
     }
 
     fun validationResult(): ValidationResult =
-        validateRules(rules(), installedSchemeNames())
+        validateRules(commitAndRules(), installedSchemeNames())
 
     private fun createSchemeEditor(): TableCellEditor =
         DefaultCellEditor(JComboBox(installedSchemeNames().toTypedArray()))

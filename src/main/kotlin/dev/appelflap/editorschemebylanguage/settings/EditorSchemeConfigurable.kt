@@ -27,7 +27,7 @@ class EditorSchemeConfigurable : Configurable {
         val settingsPanel = panel ?: return false
 
         return settingsPanel.isEnabledSelected() != settings.enabled ||
-            settingsPanel.rules() != settings.rules
+            settingsPanel.rulesSnapshot() != settings.rules
     }
 
     override fun apply() {
@@ -38,7 +38,7 @@ class EditorSchemeConfigurable : Configurable {
         }
 
         val settings = EditorSchemeSettingsState.getInstance()
-        settings.update(settingsPanel.isEnabledSelected(), settingsPanel.rules())
+        settings.update(settingsPanel.isEnabledSelected(), settingsPanel.commitAndRules())
         applyToSelectedEditor(settings)
     }
 
@@ -52,14 +52,15 @@ class EditorSchemeConfigurable : Configurable {
     }
 
     private fun applyToSelectedEditor(settings: EditorSchemeSettingsState) {
-        val project = ProjectManager.getInstance().openProjects.firstOrNull() ?: return
-        val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return
-        val handler = EditorSchemeSelectionHandler(
-            platform = IntellijEditorSchemePlatform(project),
-            enabled = { settings.enabled },
-            rules = { settings.rules.map { it.copy() } },
-        )
+        ProjectManager.getInstance().openProjects.forEach { project ->
+            val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return@forEach
+            val handler = EditorSchemeSelectionHandler(
+                platform = IntellijEditorSchemePlatform(project),
+                enabled = { settings.enabled },
+                rules = { settings.rules.map { it.copy() } },
+            )
 
-        handler.applyForEditor(editor)
+            handler.applyForEditor(editor)
+        }
     }
 }
