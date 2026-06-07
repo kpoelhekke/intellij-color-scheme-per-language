@@ -27,7 +27,7 @@ class EditorSchemeConfigurable : Configurable {
         val settingsPanel = panel ?: return false
 
         return settingsPanel.isEnabledSelected() != settings.enabled ||
-            settingsPanel.rulesSnapshot() != settings.rules
+            settingsPanel.rulesSnapshotWithActiveEditorValue() != settings.rules
     }
 
     override fun apply() {

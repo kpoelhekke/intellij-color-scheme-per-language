@@ -22,8 +22,10 @@ import javax.swing.ListSelectionModel
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
-class RuleTargetChooserDialog : DialogWrapper(false) {
-    private val allTargets = loadTargets()
+class RuleTargetChooserDialog(
+    existingTargetKeys: Set<String> = emptySet(),
+) : DialogWrapper(false) {
+    private val allTargets = loadTargets().filterNot { it.targetKey() in existingTargetKeys }
     private val listModel = DefaultListModel<RuleTarget>()
     private val targetList = JBList(listModel)
     private val searchField = SearchTextField()
@@ -93,6 +95,8 @@ class RuleTargetChooserDialog : DialogWrapper(false) {
         val id: String,
         val displayName: String,
     ) {
+        fun targetKey(): String = "${kind.name}:$id"
+
         override fun toString(): String = displayName
     }
 
