@@ -1,5 +1,6 @@
 package dev.appelflap.editorschemebylanguage.platform
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorColorsScheme
@@ -32,9 +33,17 @@ class IntellijEditorSchemePlatform(
 
     override fun applySchemeToEditor(editor: Editor, scheme: EditorColorsScheme): Boolean {
         val editorEx = editor as? EditorEx ?: return false
+        val application = ApplicationManager.getApplication()
 
-        editorEx.colorsScheme = scheme
-        editorEx.component.repaint()
+        if (application.isDispatchThread) {
+            editorEx.colorsScheme = scheme
+            editorEx.component.repaint()
+        } else {
+            application.invokeLater {
+                editorEx.colorsScheme = scheme
+                editorEx.component.repaint()
+            }
+        }
 
         return true
     }
