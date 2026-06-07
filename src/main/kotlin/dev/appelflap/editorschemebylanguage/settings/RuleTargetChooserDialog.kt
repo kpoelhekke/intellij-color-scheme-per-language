@@ -133,6 +133,7 @@ private class RuleTargetListCellRenderer : ColoredListCellRenderer<RuleTargetCho
         }
 
         append(value.displayName)
+        append(" (${value.id})", SimpleTextAttributes.GRAYED_ATTRIBUTES)
         append(" ${value.kind.name}", SimpleTextAttributes.GRAYED_ATTRIBUTES)
     }
 }
