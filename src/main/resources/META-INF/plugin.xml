@@ -1,0 +1,21 @@
+<idea-plugin>
+    <id>dev.appelflap.editor-scheme-by-language</id>
+    <name>Editor Scheme by Language</name>
+    <vendor>appelflap</vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable
+                parentId="tools"
+                instance="dev.appelflap.editorschemebylanguage.settings.EditorSchemeConfigurable"
+                id="dev.appelflap.editorschemebylanguage.settings.EditorSchemeConfigurable"
+                displayName="Editor Scheme by Language"/>
+    </extensions>
+
+    <projectListeners>
+        <listener
+                class="dev.appelflap.editorschemebylanguage.runtime.EditorSchemeSelectionListener"
+                topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
+    </projectListeners>
+</idea-plugin>
