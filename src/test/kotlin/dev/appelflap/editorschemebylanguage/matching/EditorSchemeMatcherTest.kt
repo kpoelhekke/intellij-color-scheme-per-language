@@ -73,6 +73,27 @@ class EditorSchemeMatcherTest {
     }
 
     @Test
+    fun `default scheme is used when enabled rules do not match context`() {
+        val selectedScheme = EditorSchemeMatcher.resolve(
+            enabled = true,
+            rules = listOf(
+                SchemeRule(RuleTargetKind.LANGUAGE, "java", "Java", "Kotlin Scheme"),
+                SchemeRule(RuleTargetKind.FILE_TYPE, "XML", "XML", "Text Scheme"),
+            ),
+            context = EditorSchemeContext(
+                languageId = "kotlin",
+                languageDisplayName = "Kotlin",
+                fileTypeId = "PLAIN_TEXT",
+                fileTypeDisplayName = "Text",
+            ),
+            installedSchemes = installedSchemes,
+            defaultScheme = defaultScheme,
+        )
+
+        assertEquals(defaultScheme, selectedScheme)
+    }
+
+    @Test
     fun `default scheme is used when mapped scheme is missing`() {
         val selectedScheme = EditorSchemeMatcher.resolve(
             enabled = true,
