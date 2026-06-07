@@ -3,7 +3,13 @@
 ## Automated Verification
 
 - `./gradlew test buildPlugin`: pass
+- `./gradlew test buildPlugin verifyPlugin`: pass
 - Plugin ZIP produced: `build/distributions/editor-scheme-by-language-0.1.0.zip`
+- Plugin Verifier compatibility:
+  - IU-252.28539.54: compatible
+  - IU-253.33813.25: compatible
+  - IU-261.25134.95: compatible
+  - IU-262.7132.23: compatible
 
 ## Settings
 
@@ -23,4 +29,4 @@
 
 ## Notes
 
-GUI verification was not completed in this non-interactive run. The plugin builds successfully and automated tests pass.
+GUI verification was not completed in this non-interactive run. The plugin builds successfully, automated tests pass, and Plugin Verifier reports compatibility for all scheduled IntelliJ IDEA builds.
