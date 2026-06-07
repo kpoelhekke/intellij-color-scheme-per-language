@@ -102,6 +102,46 @@ class EditorSchemeSettingsPanelBehaviorTest : BasePlatformTestCase() {
         assertEquals(originalScheme.name, panel.rulesSnapshot().single().schemeName)
     }
 
+    fun testSetStateCancelsActiveEditorBeforeReplacingRules() {
+        val colorManager = EditorColorsManager.getInstance()
+        val originalScheme = colorManager.globalScheme
+        val editedScheme = colorManager.allSchemes.first { it.name != originalScheme.name }
+        val panel = EditorSchemeSettingsPanel()
+        panel.setState(
+            enabled = true,
+            rules = listOf(
+                SchemeRule(
+                    targetKind = RuleTargetKind.LANGUAGE,
+                    targetId = "kotlin",
+                    targetDisplayName = "Kotlin",
+                    schemeName = originalScheme.name,
+                ),
+            ),
+        )
+        val table = findTable(panel.component())
+        table.columnModel.getColumn(SCHEME_COLUMN).cellEditor = DefaultCellEditor(JTextField())
+
+        table.editCellAt(0, SCHEME_COLUMN)
+        (table.editorComponent as JTextField).text = editedScheme.name
+
+        panel.setState(
+            enabled = true,
+            rules = listOf(
+                SchemeRule(
+                    targetKind = RuleTargetKind.LANGUAGE,
+                    targetId = "kotlin",
+                    targetDisplayName = "Kotlin",
+                    schemeName = originalScheme.name,
+                ),
+            ),
+        )
+
+        table.cellEditor?.stopCellEditing()
+
+        assertFalse(table.isEditing)
+        assertEquals(originalScheme.name, panel.rulesSnapshot().single().schemeName)
+    }
+
     fun testDuplicateTargetAddIsRejectedImmediately() {
         val panel = EditorSchemeSettingsPanel()
         panel.setState(

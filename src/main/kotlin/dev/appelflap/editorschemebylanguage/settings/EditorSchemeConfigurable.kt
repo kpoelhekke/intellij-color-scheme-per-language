@@ -1,12 +1,8 @@
 package dev.appelflap.editorschemebylanguage.settings
 
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ConfigurationException
-import com.intellij.openapi.project.ProjectManager
 import dev.appelflap.editorschemebylanguage.EditorSchemeByLanguageBundle
-import dev.appelflap.editorschemebylanguage.platform.IntellijEditorSchemePlatform
-import dev.appelflap.editorschemebylanguage.runtime.EditorSchemeSelectionHandler
 import javax.swing.JComponent
 
 class EditorSchemeConfigurable : Configurable {
@@ -39,7 +35,6 @@ class EditorSchemeConfigurable : Configurable {
 
         val settings = EditorSchemeSettingsState.getInstance()
         settings.update(settingsPanel.isEnabledSelected(), settingsPanel.commitAndRules())
-        applyToSelectedEditor(settings)
     }
 
     override fun reset() {
@@ -49,20 +44,5 @@ class EditorSchemeConfigurable : Configurable {
 
     override fun disposeUIResources() {
         panel = null
-    }
-
-    private fun applyToSelectedEditor(settings: EditorSchemeSettingsState) {
-        val (project, editor) = ProjectManager.getInstance().openProjects
-            .firstNotNullOfOrNull { project ->
-                FileEditorManager.getInstance(project).selectedTextEditor?.let { project to it }
-            } ?: return
-
-        val handler = EditorSchemeSelectionHandler(
-            platform = IntellijEditorSchemePlatform(project),
-            enabled = { settings.enabled },
-            rules = { settings.rules.map { it.copy() } },
-        )
-
-        handler.applyForEditor(editor)
     }
 }

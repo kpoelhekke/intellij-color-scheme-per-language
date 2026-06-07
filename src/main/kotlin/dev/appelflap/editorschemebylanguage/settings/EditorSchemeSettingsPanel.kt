@@ -35,6 +35,7 @@ class EditorSchemeSettingsPanel {
             .setRemoveAction {
                 val selectedRow = table.selectedRow
                 if (selectedRow >= 0) {
+                    cancelActiveTableEdit()
                     tableModel.removeRule(table.convertRowIndexToModel(selectedRow))
                 }
             }
@@ -47,6 +48,7 @@ class EditorSchemeSettingsPanel {
     fun component(): JPanel = rootPanel
 
     fun setState(enabled: Boolean, rules: List<SchemeRule>) {
+        cancelActiveTableEdit()
         enabledCheckBox.isSelected = enabled
         tableModel.setRules(rules)
     }
@@ -98,6 +100,7 @@ class EditorSchemeSettingsPanel {
     }
 
     fun addRuleForTarget(target: RuleTargetChooserDialog.RuleTarget): Boolean {
+        cancelActiveTableEdit()
         if (target.targetKey() in tableModel.targetKeys()) {
             return false
         }
@@ -128,6 +131,12 @@ class EditorSchemeSettingsPanel {
         }
 
         return table.cellEditor?.stopCellEditing() ?: true
+    }
+
+    private fun cancelActiveTableEdit() {
+        if (table.isEditing) {
+            table.cellEditor?.cancelCellEditing()
+        }
     }
 
     private class RulesTableModel : AbstractTableModel() {
