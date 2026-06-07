@@ -5,7 +5,6 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
-import com.intellij.util.xmlb.XmlSerializerUtil
 import dev.appelflap.editorschemebylanguage.model.SchemeRule
 
 @Service(Service.Level.APP)
@@ -20,7 +19,7 @@ class EditorSchemeSettingsState : PersistentStateComponent<EditorSchemeSettingsS
     override fun getState(): EditorSchemeSettingsState = this
 
     override fun loadState(state: EditorSchemeSettingsState) {
-        XmlSerializerUtil.copyBean(state, this)
+        update(state.enabled, state.rules)
     }
 
     fun update(enabled: Boolean, rules: List<SchemeRule>) {
