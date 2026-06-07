@@ -1,7 +1,9 @@
 package dev.appelflap.editorschemebylanguage.settings
 
+import dev.appelflap.editorschemebylanguage.EditorSchemeByLanguageBundle
 import dev.appelflap.editorschemebylanguage.model.RuleTargetKind
 import dev.appelflap.editorschemebylanguage.model.SchemeRule
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -21,7 +23,7 @@ class EditorSchemeSettingsPanelValidationTest {
     }
 
     @Test
-    fun `missing scheme references are invalid`() {
+    fun `missing scheme references are valid with warning`() {
         val result = EditorSchemeSettingsPanel.validateRules(
             rules = listOf(
                 SchemeRule(RuleTargetKind.FILE_TYPE, "JAVA", "Java", "Missing Scheme"),
@@ -29,7 +31,11 @@ class EditorSchemeSettingsPanelValidationTest {
             installedSchemeNames = listOf("Default"),
         )
 
-        assertFalse(result.isValid)
+        assertTrue(result.isValid)
+        assertEquals(
+            EditorSchemeByLanguageBundle.message("settings.validation.missing.scheme"),
+            result.message,
+        )
     }
 
     @Test

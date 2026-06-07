@@ -27,18 +27,9 @@ class EditorSchemeSettingsPanel {
 
         val tablePanel = ToolbarDecorator.createDecorator(table)
             .setAddAction {
-                val chooser = RuleTargetChooserDialog()
+                val chooser = RuleTargetChooserDialog(existingTargetKeys = tableModel.targetKeys())
                 if (chooser.showAndGet()) {
-                    chooser.selectedTarget?.let { target ->
-                        tableModel.addRule(
-                            SchemeRule(
-                                targetKind = target.kind,
-                                targetId = target.id,
-                                targetDisplayName = target.displayName,
-                                schemeName = currentGlobalSchemeName(),
-                            ),
-                        )
-                    }
+                    chooser.selectedTarget?.let(::addRuleForTarget)
                 }
             }
             .setRemoveAction {
@@ -65,13 +56,62 @@ class EditorSchemeSettingsPanel {
     fun rulesSnapshot(): List<SchemeRule> =
         tableModel.rules()
 
+    fun rulesSnapshotWithActiveEditorValue(): List<SchemeRule> {
+        val rules = rulesSnapshot()
+        if (!table.isEditing || table.editingColumn != SCHEME_COLUMN) {
+            return rules
+        }
+
+        val editingRow = table.editingRow
+        if (editingRow < 0) {
+            return rules
+        }
+
+        val modelRow = table.convertRowIndexToModel(editingRow)
+        if (modelRow !in rules.indices) {
+            return rules
+        }
+
+        return rules.mapIndexed { index, rule ->
+            if (index == modelRow) {
+                rule.copy(schemeName = table.cellEditor?.cellEditorValue?.toString().orEmpty())
+            } else {
+                rule
+            }
+        }
+    }
+
     fun commitAndRules(): List<SchemeRule> {
-        commitActiveTableEdit()
+        check(commitActiveTableEdit()) { "Active table editor rejected the current value" }
         return rulesSnapshot()
     }
 
-    fun validationResult(): ValidationResult =
-        validateRules(commitAndRules(), installedSchemeNames())
+    fun validationResult(): ValidationResult {
+        if (!commitActiveTableEdit()) {
+            return ValidationResult(
+                isValid = false,
+                message = EditorSchemeByLanguageBundle.message("settings.validation.missing.scheme"),
+            )
+        }
+
+        return validateRules(rulesSnapshot(), installedSchemeNames())
+    }
+
+    fun addRuleForTarget(target: RuleTargetChooserDialog.RuleTarget): Boolean {
+        if (target.targetKey() in tableModel.targetKeys()) {
+            return false
+        }
+
+        tableModel.addRule(
+            SchemeRule(
+                targetKind = target.kind,
+                targetId = target.id,
+                targetDisplayName = target.displayName,
+                schemeName = currentGlobalSchemeName(),
+            ),
+        )
+        return true
+    }
 
     private fun createSchemeEditor(): TableCellEditor =
         DefaultCellEditor(JComboBox(installedSchemeNames().toTypedArray()))
@@ -82,10 +122,12 @@ class EditorSchemeSettingsPanel {
     private fun currentGlobalSchemeName(): String =
         EditorColorsManager.getInstance().globalScheme.name
 
-    private fun commitActiveTableEdit() {
-        if (table.isEditing) {
-            table.cellEditor?.stopCellEditing()
+    private fun commitActiveTableEdit(): Boolean {
+        if (!table.isEditing) {
+            return true
         }
+
+        return table.cellEditor?.stopCellEditing() ?: true
     }
 
     private class RulesTableModel : AbstractTableModel() {
@@ -135,6 +177,8 @@ class EditorSchemeSettingsPanel {
             fireTableRowsDeleted(index, index)
         }
 
+        fun targetKeys(): Set<String> = rules.mapTo(mutableSetOf()) { it.targetKey() }
+
         fun rules(): List<SchemeRule> = rules.map { it.copy() }
     }
 
@@ -161,7 +205,7 @@ class EditorSchemeSettingsPanel {
             val installed = installedSchemeNames.toSet()
             if (rules.any { it.schemeName !in installed }) {
                 return ValidationResult(
-                    isValid = false,
+                    isValid = true,
                     message = EditorSchemeByLanguageBundle.message("settings.validation.missing.scheme"),
                 )
             }
