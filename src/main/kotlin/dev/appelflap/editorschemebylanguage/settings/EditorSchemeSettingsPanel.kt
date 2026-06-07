@@ -205,7 +205,7 @@ class EditorSchemeSettingsPanel {
             val installed = installedSchemeNames.toSet()
             if (rules.any { it.schemeName !in installed }) {
                 return ValidationResult(
-                    isValid = true,
+                    isValid = false,
                     message = EditorSchemeByLanguageBundle.message("settings.validation.missing.scheme"),
                 )
             }

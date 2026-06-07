@@ -52,15 +52,17 @@ class EditorSchemeConfigurable : Configurable {
     }
 
     private fun applyToSelectedEditor(settings: EditorSchemeSettingsState) {
-        ProjectManager.getInstance().openProjects.forEach { project ->
-            val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return@forEach
-            val handler = EditorSchemeSelectionHandler(
-                platform = IntellijEditorSchemePlatform(project),
-                enabled = { settings.enabled },
-                rules = { settings.rules.map { it.copy() } },
-            )
+        val (project, editor) = ProjectManager.getInstance().openProjects
+            .firstNotNullOfOrNull { project ->
+                FileEditorManager.getInstance(project).selectedTextEditor?.let { project to it }
+            } ?: return
 
-            handler.applyForEditor(editor)
-        }
+        val handler = EditorSchemeSelectionHandler(
+            platform = IntellijEditorSchemePlatform(project),
+            enabled = { settings.enabled },
+            rules = { settings.rules.map { it.copy() } },
+        )
+
+        handler.applyForEditor(editor)
     }
 }

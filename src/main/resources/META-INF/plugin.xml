@@ -9,8 +9,7 @@
         <applicationConfigurable
                 parentId="tools"
                 instance="dev.appelflap.editorschemebylanguage.settings.EditorSchemeConfigurable"
-                id="dev.appelflap.editorschemebylanguage.settings.EditorSchemeConfigurable"
-                displayName="Editor Scheme by Language"/>
+                id="dev.appelflap.editorschemebylanguage.settings.EditorSchemeConfigurable"/>
     </extensions>
 
     <projectListeners>

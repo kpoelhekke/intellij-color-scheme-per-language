@@ -23,7 +23,7 @@ class EditorSchemeSettingsPanelValidationTest {
     }
 
     @Test
-    fun `missing scheme references are valid with warning`() {
+    fun `missing scheme references are invalid`() {
         val result = EditorSchemeSettingsPanel.validateRules(
             rules = listOf(
                 SchemeRule(RuleTargetKind.FILE_TYPE, "JAVA", "Java", "Missing Scheme"),
@@ -31,7 +31,7 @@ class EditorSchemeSettingsPanelValidationTest {
             installedSchemeNames = listOf("Default"),
         )
 
-        assertTrue(result.isValid)
+        assertFalse(result.isValid)
         assertEquals(
             EditorSchemeByLanguageBundle.message("settings.validation.missing.scheme"),
             result.message,
