@@ -1,5 +1,7 @@
 # Changelog
 
+## [Unreleased]
+
 ## [0.3.0]
 
 - Rename the plugin to "Color Scheme per Language" (new plugin id, package, and settings storage).
