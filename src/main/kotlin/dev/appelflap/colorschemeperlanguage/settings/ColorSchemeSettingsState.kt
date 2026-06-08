@@ -14,6 +14,10 @@ import dev.appelflap.colorschemeperlanguage.model.SchemeRule
 )
 class ColorSchemeSettingsState : PersistentStateComponent<ColorSchemeSettingsState> {
     var enabled: Boolean = true
+
+    // var + MutableList is required by IntelliJ's XML state serializer (reflective population)
+    // and by loadState reassigning the field.
+    @Suppress("DoubleMutabilityForCollection")
     var rules: MutableList<SchemeRule> = mutableListOf()
 
     override fun getState(): ColorSchemeSettingsState = this

@@ -1,0 +1,20 @@
+# Overrides on top of detekt's default config (buildUponDefaultConfig = true).
+# Formatting is delegated to the ktlint-backed `formatting` ruleset; style knobs
+# (indent, line length, code style) live in .editorconfig.
+
+formatting:
+  active: true
+  autoCorrect: true
+
+complexity:
+  # UI panels and table models legitimately expose many small methods.
+  TooManyFunctions:
+    thresholdInClasses: 20
+
+style:
+  # Guard-clause early returns are idiomatic; the default limit of 2 is too strict.
+  ReturnCount:
+    max: 4
+  # Swing/JBUI layout sizing is full of inline dimensions; flagging them is noise.
+  MagicNumber:
+    active: false
