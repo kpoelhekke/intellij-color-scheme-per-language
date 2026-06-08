@@ -1,5 +1,6 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
+import org.jetbrains.changelog.Changelog
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
@@ -18,6 +19,57 @@ dependencies {
     intellijPlatform {
         intellijIdea("2025.2.6.2")
         testFramework(TestFrameworkType.Platform)
+    }
+}
+
+val pluginVersion = providers.gradleProperty("pluginVersion")
+
+changelog {
+    // Drive getChangelog/patchChangelog off the injected version, not the static project version.
+    version = pluginVersion
+    // CHANGELOG.md uses flat bullet lists, so disable the default grouped sections.
+    groups.empty()
+    repositoryUrl = providers.gradleProperty("pluginRepositoryUrl")
+}
+
+// Render the matching CHANGELOG.md section eagerly to a String. Resolving it here (rather than in a
+// lazy provider that captures the `changelog` extension) keeps the patchPluginXml task config-cache safe.
+val changeNotesHtml = with(changelog) {
+    renderItem(
+        (getOrNull(pluginVersion.get()) ?: getUnreleased())
+            .withHeader(false)
+            .withEmptySections(false),
+        Changelog.OutputType.HTML,
+    )
+}
+
+intellijPlatform {
+    pluginConfiguration {
+        version = pluginVersion
+        changeNotes = changeNotesHtml
+    }
+
+    // Signs only when the certificate env vars are non-blank; otherwise the release publishes unsigned.
+    // Unset GitHub secrets surface as empty strings, so blanks are filtered to absent providers.
+    signing {
+        certificateChain = providers.environmentVariable("CERTIFICATE_CHAIN").filter(String::isNotBlank)
+        privateKey = providers.environmentVariable("PRIVATE_KEY").filter(String::isNotBlank)
+        password = providers.environmentVariable("PRIVATE_KEY_PASSWORD").filter(String::isNotBlank)
+    }
+
+    publishing {
+        token = providers.environmentVariable("PUBLISH_TOKEN")
+        // Derive the release channel from a tag suffix: 0.4.0 -> "default" (stable),
+        // 0.4.0-beta.1 -> "beta", 0.4.0-eap.2 -> "eap", etc.
+        channels = pluginVersion.map { version ->
+            listOf(version.substringAfter('-', "").substringBefore('.').ifEmpty { "default" })
+        }
+    }
+
+    pluginVerification {
+        ides {
+            recommended()
+        }
     }
 }
 

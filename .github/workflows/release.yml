@@ -1,0 +1,90 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build, verify & publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          # Full history + branches so the bump can be committed back to main.
+          fetch-depth: 0
+
+      - name: Resolve version from tag
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          if [[ "${VERSION}" == *-* ]]; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          validate-wrappers: true
+
+      # Re-run the full gate on the tagged commit before anything is published.
+      - name: Test & verify
+        run: ./gradlew -PpluginVersion="${{ steps.version.outputs.version }}" test verifyPlugin
+
+      - name: Extract release notes
+        run: ./gradlew --quiet getChangelog --unreleased --no-header --no-summary > release-notes.md
+
+      # signPlugin runs automatically before publishPlugin only when the cert secrets are present.
+      - name: Publish to JetBrains Marketplace
+        env:
+          PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
+          CERTIFICATE_CHAIN: ${{ secrets.CERTIFICATE_CHAIN }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          PRIVATE_KEY_PASSWORD: ${{ secrets.PRIVATE_KEY_PASSWORD }}
+        run: ./gradlew -PpluginVersion="${{ steps.version.outputs.version }}" publishPlugin
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${{ steps.version.outputs.version }}" \
+            --notes-file release-notes.md \
+            ${{ steps.version.outputs.prerelease == 'true' && '--prerelease' || '' }} \
+            build/distributions/*.zip
+
+      # Sync the published version into the repo and stamp the changelog on main.
+      - name: Commit version bump back to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout main
+          VERSION="${{ steps.version.outputs.version }}"
+          sed -i "s/^pluginVersion = .*/pluginVersion = ${VERSION}/" gradle.properties
+          sed -i "s/^version = .*/version = ${VERSION}/" gradle.properties
+          ./gradlew -PpluginVersion="${VERSION}" patchChangelog
+          git add gradle.properties CHANGELOG.md
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+          else
+            git commit -m "chore: release ${VERSION} [skip ci]"
+            git push origin main
+          fi
