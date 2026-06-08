@@ -13,6 +13,8 @@
                 parentId="tools"
                 instance="dev.appelflap.editorschemebylanguage.settings.EditorSchemeConfigurable"
                 id="dev.appelflap.editorschemebylanguage.settings.EditorSchemeConfigurable"/>
+        <diff.DiffExtension implementation="dev.appelflap.editorschemebylanguage.diff.DiffEditorSchemeExtension"/>
+        <diff.merge.MergeTool implementation="dev.appelflap.editorschemebylanguage.merge.MergeEditorSchemeTool"/>
     </extensions>
 
     <projectListeners>
