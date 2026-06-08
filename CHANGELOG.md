@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.0]
+
+- Rename the plugin to "Color Scheme per Language" (new plugin id, package, and settings storage).
+- Drop file-type rules; rules now target a `Language` only.
+- Show color scheme names in the rules table without the internal `_@user_` prefix, matching the native color scheme selector.
+
 ## [0.2.0]
 
 - Apply matching schemes to supported diff editor panes.

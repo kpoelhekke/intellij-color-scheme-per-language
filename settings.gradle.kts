@@ -1,6 +1,6 @@
 import org.jetbrains.intellij.platform.gradle.extensions.intellijPlatform
 
-rootProject.name = "editor-scheme-by-language"
+rootProject.name = "color-scheme-per-language"
 
 pluginManagement {
     plugins {
