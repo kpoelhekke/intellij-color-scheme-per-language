@@ -8,7 +8,10 @@ Editor Scheme by Language is an IntelliJ IDEA plugin that applies installed edit
 - Rules map a `Language` or `FileType` to an installed editor color scheme.
 - `Language` rules take precedence over `FileType` rules.
 - Unmapped editors use the current IDE default from `Settings | Editor | Color Scheme`.
-- The plugin updates only the active editor through the supported text-editor path.
+- The plugin updates active editors through supported text-editor paths.
+- Supported diff viewers that expose editor panes through public IntelliJ Platform APIs use the same `Language`/`FileType` scheme rules as normal editors.
+- Merge conflict views and editor-backed previews are handled when IntelliJ creates them as ordinary editor instances with public file or file type metadata.
+- Existing diff, merge, and preview editors are not rescanned when settings change; reopen or recreate the view to apply updated mappings.
 
 ## Development
 

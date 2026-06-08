@@ -12,7 +12,8 @@
         <applicationConfigurable
                 parentId="tools"
                 instance="dev.appelflap.editorschemebylanguage.settings.EditorSchemeConfigurable"
-                id="dev.appelflap.editorschemebylanguage.settings.EditorSchemeConfigurable"/>
+                id="dev.appelflap.editorschemebylanguage.settings.EditorSchemeConfigurable"
+                displayName="Editor Scheme by Language"/>
         <diff.DiffExtension implementation="dev.appelflap.editorschemebylanguage.diff.DiffEditorSchemeExtension"/>
         <editorFactoryListener implementation="dev.appelflap.editorschemebylanguage.runtime.EditorSchemeCreationListener"/>
     </extensions>
