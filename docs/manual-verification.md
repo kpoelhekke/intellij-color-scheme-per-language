@@ -4,7 +4,7 @@
 
 - `./gradlew test buildPlugin`: pass
 - `./gradlew test buildPlugin verifyPlugin`: pass
-- Plugin ZIP produced: `build/distributions/editor-scheme-by-language-0.1.0.zip`
+- Plugin ZIP produced: `build/distributions/editor-scheme-by-language-0.2.0.zip`
 - Plugin Verifier compatibility:
   - IU-252.28539.54: compatible
   - IU-253.33813.25: compatible
