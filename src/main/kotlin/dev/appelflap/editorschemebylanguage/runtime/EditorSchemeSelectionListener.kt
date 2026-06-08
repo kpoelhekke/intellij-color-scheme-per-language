@@ -4,13 +4,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.fileEditor.TextEditor
-import dev.appelflap.editorschemebylanguage.matching.EditorSchemeMatcher
-import dev.appelflap.editorschemebylanguage.model.EditorSchemeContext
-import dev.appelflap.editorschemebylanguage.model.SchemeRef
 import dev.appelflap.editorschemebylanguage.model.SchemeRule
 import dev.appelflap.editorschemebylanguage.platform.EditorSchemePlatform
 import dev.appelflap.editorschemebylanguage.platform.IntellijEditorSchemePlatform
-import dev.appelflap.editorschemebylanguage.platform.PlatformEditorContext
 import dev.appelflap.editorschemebylanguage.settings.EditorSchemeSettingsState
 
 class EditorSchemeSelectionListener : FileEditorManagerListener {
@@ -32,26 +28,8 @@ class EditorSchemeSelectionHandler(
     private val enabled: () -> Boolean,
     private val rules: () -> List<SchemeRule>,
 ) {
-    fun applyForEditor(editor: Editor): Boolean {
-        val platformContext = platform.contextFor(editor) ?: return false
-        val defaultScheme = platform.currentGlobalScheme()
-        val selectedScheme = EditorSchemeMatcher.resolve(
-            enabled = enabled(),
-            rules = rules(),
-            context = platformContext.toEditorSchemeContext(),
-            installedSchemes = platform.installedSchemes().map { SchemeRef(it.name) },
-            defaultScheme = SchemeRef(defaultScheme.name),
-        )
+    private val applier = EditorSchemeApplier(platform, enabled, rules)
 
-        val scheme = platform.findScheme(selectedScheme.name) ?: defaultScheme
-        return platform.applySchemeToEditor(editor, scheme)
-    }
-
-    private fun PlatformEditorContext.toEditorSchemeContext(): EditorSchemeContext =
-        EditorSchemeContext(
-            languageId = language?.id,
-            languageDisplayName = language?.displayName,
-            fileTypeId = fileType?.name,
-            fileTypeDisplayName = fileType?.displayName,
-        )
+    fun applyForEditor(editor: Editor): Boolean =
+        applier.applyForEditor(editor)
 }
