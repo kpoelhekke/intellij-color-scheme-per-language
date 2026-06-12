@@ -2,37 +2,41 @@ name: Release
 
 on:
   push:
-    tags:
-      - "v*"
+    branches: [main]
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: release
   cancel-in-progress: false
 
 permissions:
   contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
-  release:
-    name: Build, verify & publish
+  release-please:
+    name: Release Please
     runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
-      - name: Check out repository
+      - name: Run Release Please
+        id: release
+        uses: googleapis/release-please-action@v4
+
+  publish:
+    name: Build, verify & publish
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out release tag
         uses: actions/checkout@v4
         with:
-          # Full history + branches so the bump can be committed back to main.
-          fetch-depth: 0
-
-      - name: Resolve version from tag
-        id: version
-        run: |
-          VERSION="${GITHUB_REF_NAME#v}"
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-          if [[ "${VERSION}" == *-* ]]; then
-            echo "prerelease=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "prerelease=false" >> "$GITHUB_OUTPUT"
-          fi
+          ref: ${{ needs.release-please.outputs.tag_name }}
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -47,10 +51,13 @@ jobs:
 
       # Re-run the full gate on the tagged commit before anything is published.
       - name: Test & verify
-        run: ./gradlew -PpluginVersion="${{ steps.version.outputs.version }}" test verifyPlugin
+        run: ./gradlew test verifyPlugin
 
-      - name: Extract release notes
-        run: ./gradlew --quiet getChangelog --unreleased --no-header --no-summary > release-notes.md
+      # The release body written by Release Please becomes the Marketplace change-notes.
+      - name: Fetch release notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release view "${{ needs.release-please.outputs.tag_name }}" --json body --jq .body > release-notes.md
 
       # signPlugin runs automatically before publishPlugin only when the cert secrets are present.
       - name: Publish to JetBrains Marketplace
@@ -59,32 +66,10 @@ jobs:
           CERTIFICATE_CHAIN: ${{ secrets.CERTIFICATE_CHAIN }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           PRIVATE_KEY_PASSWORD: ${{ secrets.PRIVATE_KEY_PASSWORD }}
-        run: ./gradlew -PpluginVersion="${{ steps.version.outputs.version }}" publishPlugin
+        run: |
+          CHANGE_NOTES="$(cat release-notes.md)" ./gradlew publishPlugin
 
-      - name: Create GitHub release
+      - name: Attach plugin zip to GitHub release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create "${GITHUB_REF_NAME}" \
-            --title "${{ steps.version.outputs.version }}" \
-            --notes-file release-notes.md \
-            ${{ steps.version.outputs.prerelease == 'true' && '--prerelease' || '' }} \
-            build/distributions/*.zip
-
-      # Sync the published version into the repo and stamp the changelog on main.
-      - name: Commit version bump back to main
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout main
-          VERSION="${{ steps.version.outputs.version }}"
-          sed -i "s/^pluginVersion = .*/pluginVersion = ${VERSION}/" gradle.properties
-          sed -i "s/^version = .*/version = ${VERSION}/" gradle.properties
-          ./gradlew -PpluginVersion="${VERSION}" patchChangelog
-          git add gradle.properties CHANGELOG.md
-          if git diff --cached --quiet; then
-            echo "Nothing to commit."
-          else
-            git commit -m "chore: release ${VERSION} [skip ci]"
-            git push origin main
-          fi
+        run: gh release upload "${{ needs.release-please.outputs.tag_name }}" build/distributions/*.zip

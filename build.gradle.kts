@@ -1,11 +1,12 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
-import org.jetbrains.changelog.Changelog
+import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.intellij.platform")
+    // Applied only for the markdownToHTML util; CHANGELOG.md itself is owned by Release Please.
     id("org.jetbrains.changelog")
     id("io.gitlab.arturbosch.detekt")
 }
@@ -24,29 +25,15 @@ dependencies {
 
 val pluginVersion = providers.gradleProperty("pluginVersion")
 
-changelog {
-    // Drive getChangelog/patchChangelog off the injected version, not the static project version.
-    version = pluginVersion
-    // CHANGELOG.md uses flat bullet lists, so disable the default grouped sections.
-    groups.empty()
-    repositoryUrl = providers.gradleProperty("pluginRepositoryUrl")
-}
-
-// Render the matching CHANGELOG.md section eagerly to a String. Resolving it here (rather than in a
-// lazy provider that captures the `changelog` extension) keeps the patchPluginXml task config-cache safe.
-val changeNotesHtml = with(changelog) {
-    renderItem(
-        (getOrNull(pluginVersion.get()) ?: getUnreleased())
-            .withHeader(false)
-            .withEmptySections(false),
-        Changelog.OutputType.HTML,
-    )
-}
-
 intellijPlatform {
     pluginConfiguration {
         version = pluginVersion
-        changeNotes = changeNotesHtml
+        // Release notes are produced by Release Please; the publish workflow passes the GitHub
+        // release body in via CHANGE_NOTES. Local builds without it get empty change notes.
+        changeNotes = providers.environmentVariable("CHANGE_NOTES")
+            .filter(String::isNotBlank)
+            .map { markdownToHTML(it) }
+            .orElse("")
     }
 
     // Signs only when the certificate env vars are non-blank; otherwise the release publishes unsigned.
