@@ -1,8 +1,8 @@
 package dev.appelflap.colorschemeperlanguage.settings
 
 import com.intellij.openapi.editor.colors.EditorColorsManager
-import com.intellij.ui.SimpleListCellRenderer
 import com.intellij.ui.ToolbarDecorator
+import com.intellij.ui.dsl.listCellRenderer.textListCellRenderer
 import com.intellij.ui.table.JBTable
 import dev.appelflap.colorschemeperlanguage.ColorSchemePerLanguageBundle
 import dev.appelflap.colorschemeperlanguage.model.SchemeRule
@@ -122,7 +122,7 @@ class ColorSchemeSettingsPanel {
 
     private fun createSchemeEditor(): TableCellEditor {
         val comboBox = JComboBox(installedSchemeNames().toTypedArray())
-        comboBox.renderer = SimpleListCellRenderer.create("") { displaySchemeName(it) }
+        comboBox.renderer = textListCellRenderer("") { displaySchemeName(it) }
         return DefaultCellEditor(comboBox)
     }
 
