@@ -122,7 +122,7 @@ class ColorSchemeSettingsPanel {
 
     private fun createSchemeEditor(): TableCellEditor {
         val comboBox = JComboBox(installedSchemeNames().toTypedArray())
-        comboBox.renderer = textListCellRenderer("") { displaySchemeName(it) }
+        comboBox.renderer = textListCellRenderer { displaySchemeName(it) }
         return DefaultCellEditor(comboBox)
     }
 
