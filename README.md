@@ -21,12 +21,12 @@
 
 1. Open `Settings | Tools | Color Scheme per Language`.
 2. Click **Add** and pick a language and the color scheme it should use.
-3. Apply. The scheme is used the next time an editor for that language becomes active.
+3. Apply. Open editors update immediately.
 
 Good to know:
 
 - Rules match on the file's language; anything unmapped falls back to your default color scheme.
-- Rule changes take effect when you switch editors or open new ones. Already-open diff, merge, and preview views are not rescanned — reopen them to pick up new rules.
+- Rule changes apply to open editors as soon as you hit Apply. Already-open diff, merge, and preview views are not rescanned — reopen them to pick up new rules.
 - Uncheck **Enabled** in the settings page to suspend all rules; your configuration is kept.
 
 ## Compatibility

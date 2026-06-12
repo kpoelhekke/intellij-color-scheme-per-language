@@ -6,6 +6,7 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import dev.appelflap.colorschemeperlanguage.model.SchemeRule
+import dev.appelflap.colorschemeperlanguage.runtime.ColorSchemeRefresher
 
 @Service(Service.Level.APP)
 @State(
@@ -29,6 +30,7 @@ class ColorSchemeSettingsState : PersistentStateComponent<ColorSchemeSettingsSta
     fun update(enabled: Boolean, rules: List<SchemeRule>) {
         this.enabled = enabled
         this.rules = rules.map { it.copy() }.toMutableList()
+        ColorSchemeRefresher.scheduleRefresh()
     }
 
     companion object {
