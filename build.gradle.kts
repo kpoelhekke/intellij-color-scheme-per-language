@@ -28,6 +28,19 @@ val pluginVersion = providers.gradleProperty("pluginVersion")
 intellijPlatform {
     pluginConfiguration {
         version = pluginVersion
+
+        // The Marketplace listing is the README section between the description markers,
+        // so user-facing docs live in one place.
+        description = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map {
+            val start = "<!-- Plugin description -->"
+            val end = "<!-- Plugin description end -->"
+            with(it.lines()) {
+                if (!containsAll(listOf(start, end))) {
+                    throw GradleException("Plugin description markers not found in README.md")
+                }
+                subList(indexOf(start) + 1, indexOf(end)).joinToString("\n")
+            }.let(::markdownToHTML)
+        }
         // Release notes are produced by Release Please; the publish workflow passes the GitHub
         // release body in via CHANGE_NOTES. Local builds without it get empty change notes.
         changeNotes = providers.environmentVariable("CHANGE_NOTES")

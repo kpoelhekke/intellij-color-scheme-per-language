@@ -1,33 +1,50 @@
 # Color Scheme per Language
 
-Color Scheme per Language is an IntelliJ IDEA plugin that applies installed editor color schemes to active editors based on configured IntelliJ `Language` rules.
+[![CI](https://github.com/kpoelhekke/intellij-color-scheme-per-language/actions/workflows/ci.yml/badge.svg)](https://github.com/kpoelhekke/intellij-color-scheme-per-language/actions/workflows/ci.yml)
 
-## Behavior
+<!-- Plugin description -->
+**Color Scheme per Language** switches the editor color scheme based on the language of the file you are working in. Map each language to one of your installed color schemes and instantly see at a glance whether you are editing Kotlin, SQL, YAML, or anything else.
 
-- Configure rules in `Settings | Tools | Color Scheme per Language`.
-- Rules map a `Language` to an installed editor color scheme.
-- Unmapped editors use the current IDE default from `Settings | Editor | Color Scheme`.
-- The plugin updates active editors through supported text-editor paths.
-- Supported diff viewers that expose editor panes through public IntelliJ Platform APIs use the same `Language` scheme rules as normal editors.
-- Merge conflict views and editor-backed previews are handled when IntelliJ creates them as ordinary editor instances with public language metadata.
-- Existing diff, merge, and preview editors are not rescanned when settings change; reopen or recreate the view to apply updated mappings.
+- Map any language to any installed editor color scheme.
+- Schemes apply automatically as you open files and switch between editor tabs.
+- Diff viewers get the same per-language schemes as regular editors, and merge or preview views are covered when the IDE creates them as ordinary editors.
+- Languages without a rule keep your default color scheme (`Settings | Editor | Color Scheme`).
+- One checkbox disables the plugin without losing your rules.
+<!-- Plugin description end -->
+
+## Installation
+
+- **JetBrains Marketplace**: `Settings | Plugins | Marketplace`, search for **"Color Scheme per Language"**, and install.
+- **Manual**: download the plugin zip from the [latest release](https://github.com/kpoelhekke/intellij-color-scheme-per-language/releases/latest), then `Settings | Plugins | ⚙ | Install Plugin from Disk…`.
+
+## Usage
+
+1. Open `Settings | Tools | Color Scheme per Language`.
+2. Click **Add** and pick a language and the color scheme it should use.
+3. Apply. The scheme is used the next time an editor for that language becomes active.
+
+Good to know:
+
+- Rules match on the file's language; anything unmapped falls back to your default color scheme.
+- Rule changes take effect when you switch editors or open new ones. Already-open diff, merge, and preview views are not rescanned — reopen them to pick up new rules.
+- Uncheck **Enabled** in the settings page to suspend all rules; your configuration is kept.
+
+## Compatibility
+
+IntelliJ IDEA 2025.2 or newer. Other IntelliJ-based IDEs are not officially verified.
 
 ## Development
 
-Run tests:
-
 ```bash
-./gradlew test
+./gradlew check        # lint (detekt) + tests
+./gradlew buildPlugin  # build the distributable zip
+./gradlew runIde       # launch a sandbox IDE with the plugin
 ```
 
-Build plugin:
+The section of this README between the `<!-- Plugin description -->` markers is extracted at build time and becomes the JetBrains Marketplace listing — keep it self-contained.
 
-```bash
-./gradlew buildPlugin
-```
+Commits follow [Conventional Commits](https://www.conventionalcommits.org) (enforced in CI). Releases are automated with [Release Please](https://github.com/googleapis/release-please): merging the release PR tags, publishes to the Marketplace, and updates the changelog.
 
-Run development IDE:
+## License
 
-```bash
-./gradlew runIde
-```
+[Apache 2.0](LICENSE)

@@ -2,9 +2,7 @@
     <id>dev.appelflap.color-scheme-per-language</id>
     <name>Color Scheme per Language</name>
     <vendor>appelflap</vendor>
-    <description>
-        Applies installed editor color schemes to active IntelliJ IDEA editors based on configured Language rules.
-    </description>
+    <!-- description is injected by patchPluginXml from the marked README.md section. -->
 
     <depends>com.intellij.modules.platform</depends>
 
