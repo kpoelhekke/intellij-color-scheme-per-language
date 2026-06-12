@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.3.0...v0.3.1) (2026-06-12)
+
+
+### Bug Fixes
+
+* replace deprecated SimpleListCellRenderer with textListCellRenderer ([6338c89](https://github.com/kpoelhekke/intellij-color-scheme-per-language/commit/6338c89a5575361dc824f650e91bc8c52b05491d))
+
 ## [0.3.0](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.2.0...v0.3.0) (2026-06-08)
 
 
