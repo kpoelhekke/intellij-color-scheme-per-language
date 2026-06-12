@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.3.1...v0.4.0) (2026-06-12)
+
+
+### Features
+
+* add runtime color scheme refreshing and test coverage ([52a9735](https://github.com/kpoelhekke/intellij-color-scheme-per-language/commit/52a97353df3d5309187fead0ce6ae6546978631e))
+
 ## [0.3.1](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.3.0...v0.3.1) (2026-06-12)
 
 
