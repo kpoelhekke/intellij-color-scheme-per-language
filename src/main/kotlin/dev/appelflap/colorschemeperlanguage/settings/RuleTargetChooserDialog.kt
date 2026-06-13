@@ -99,6 +99,9 @@ class RuleTargetChooserDialog(
     companion object {
         private fun loadTargets(): List<RuleTarget> =
             Language.getRegisteredLanguages()
+                // Language.ANY is a placeholder with a blank id and display name; it would render as " ()".
+                .filterNot { it === Language.ANY }
+                .filter { it.id.isNotBlank() && it.displayName.isNotBlank() }
                 .map { language ->
                     RuleTarget(
                         id = language.id,
