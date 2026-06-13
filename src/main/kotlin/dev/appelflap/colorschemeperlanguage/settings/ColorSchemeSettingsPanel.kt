@@ -4,6 +4,8 @@ import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.dsl.listCellRenderer.textListCellRenderer
 import com.intellij.ui.table.JBTable
+import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import dev.appelflap.colorschemeperlanguage.ColorSchemePerLanguageBundle
 import dev.appelflap.colorschemeperlanguage.model.SchemeRule
 import java.awt.BorderLayout
@@ -46,6 +48,7 @@ class ColorSchemeSettingsPanel {
             }
             .createPanel()
 
+        enabledCheckBox.border = JBUI.Borders.emptyBottom(UIUtil.LARGE_VGAP)
         rootPanel.add(enabledCheckBox, BorderLayout.NORTH)
         rootPanel.add(tablePanel, BorderLayout.CENTER)
     }
