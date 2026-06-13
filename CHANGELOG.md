@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.1](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.4.0...v0.4.1) (2026-06-13)
+
+
+### Bug Fixes
+
+* **settings:** add bottom spacing to enabled checkbox for proper layout ([a3d7170](https://github.com/kpoelhekke/intellij-color-scheme-per-language/commit/a3d717006cfb324c53a10e30debb840dfe3cf289))
+* **settings:** exclude invalid languages in rule target chooser ([dc154c4](https://github.com/kpoelhekke/intellij-color-scheme-per-language/commit/dc154c48ab21fea8b7a3f7876dbb7960ab1b62ea))
+
 ## [0.4.0](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.3.1...v0.4.0) (2026-06-12)
 
 
