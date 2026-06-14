@@ -51,15 +51,19 @@ class IntellijColorSchemePlatform(
         val application = ApplicationManager.getApplication()
 
         if (application.isDispatchThread) {
-            editorEx.colorsScheme = scheme
-            editorEx.component.repaint()
-        } else {
-            application.invokeLater {
-                editorEx.colorsScheme = scheme
-                editorEx.component.repaint()
-            }
+            return applyIfAlive(editorEx, scheme)
         }
 
+        application.invokeLater { applyIfAlive(editorEx, scheme) }
+        return true
+    }
+
+    // Selection events may arrive after the editor was disposed (rapid close/switch).
+    // Mutating a disposed editor crashes in EditorImpl.reinitSettings, so skip it.
+    private fun applyIfAlive(editorEx: EditorEx, scheme: EditorColorsScheme): Boolean {
+        if (editorEx.isDisposed) return false
+        editorEx.colorsScheme = scheme
+        editorEx.component.repaint()
         return true
     }
 }
