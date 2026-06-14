@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.4.1...v0.4.2) (2026-06-14)
+
+
+### Bug Fixes
+
+* **runtime:** skip disposed editors when applying color scheme ([f02ea00](https://github.com/kpoelhekke/intellij-color-scheme-per-language/commit/f02ea003c8bac95d870d1a95ae17343594ec030c))
+
 ## [0.4.1](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.4.0...v0.4.1) (2026-06-13)
 
 
