@@ -9,6 +9,7 @@
 - Schemes apply automatically as you open files and switch between editor tabs.
 - Diff viewers get the same per-language schemes as regular editors, and merge or preview views are covered when the IDE creates them as ordinary editors.
 - Languages without a rule keep your default color scheme (`Settings | Editor | Color Scheme`).
+- The editor font follows your main theme unless the per-language scheme defines its own font.
 - One checkbox disables the plugin without losing your rules.
 <!-- Plugin description end -->
 
@@ -26,6 +27,7 @@
 Good to know:
 
 - Rules match on the file's language; anything unmapped falls back to your default color scheme.
+- A per-language scheme only changes colors. The editor font follows the cascade: the per-language scheme's own font if it sets one, otherwise your default color scheme's font, otherwise `Settings | Editor | Font`. So when a scheme is set to "use the default font", its editors track your main theme instead of getting stuck at a fixed size.
 - Rule changes apply to open editors as soon as you hit Apply. Already-open diff, merge, and preview views are not rescanned — reopen them to pick up new rules.
 - Uncheck **Enabled** in the settings page to suspend all rules; your configuration is kept.
 

@@ -62,8 +62,19 @@ class IntellijColorSchemePlatform(
     // Mutating a disposed editor crashes in EditorImpl.reinitSettings, so skip it.
     private fun applyIfAlive(editorEx: EditorEx, scheme: EditorColorsScheme): Boolean {
         if (editorEx.isDisposed) return false
-        editorEx.colorsScheme = scheme
+        editorEx.colorsScheme = schemeForEditor(scheme)
         editorEx.component.repaint()
         return true
     }
+
+    // A per-language override scheme is the shared installed scheme object, whose font is whatever was
+    // baked into it. Assigning it raw makes the editor ignore the main theme's font. Wrapping keeps its
+    // colors while letting the editor font follow the main theme (see FontFollowingColorScheme). The
+    // default/main scheme needs no wrapping: applied raw, it already reports the right font.
+    private fun schemeForEditor(scheme: EditorColorsScheme): EditorColorsScheme =
+        if (scheme.name == currentGlobalScheme().name) {
+            scheme
+        } else {
+            FontFollowingColorScheme(scheme) { currentGlobalScheme() }
+        }
 }

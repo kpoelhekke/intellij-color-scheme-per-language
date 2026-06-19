@@ -16,6 +16,12 @@
         <editorFactoryListener implementation="dev.appelflap.colorschemeperlanguage.runtime.ColorSchemeCreationListener"/>
     </extensions>
 
+    <applicationListeners>
+        <listener
+                class="dev.appelflap.colorschemeperlanguage.runtime.GlobalSchemeChangeListener"
+                topic="com.intellij.openapi.editor.colors.EditorColorsListener"/>
+    </applicationListeners>
+
     <projectListeners>
         <listener
                 class="dev.appelflap.colorschemeperlanguage.runtime.ColorSchemeSelectionListener"
