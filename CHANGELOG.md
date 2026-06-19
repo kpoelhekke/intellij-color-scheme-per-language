@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.4.2...v0.5.0) (2026-06-19)
+
+
+### Features
+
+* **fonts:** add font cascade logic and main theme tracking ([0ef477b](https://github.com/kpoelhekke/intellij-color-scheme-per-language/commit/0ef477bfaae57742f82bc64599dcfeba0c2d49ef))
+
 ## [0.4.2](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.4.1...v0.4.2) (2026-06-14)
 
 
