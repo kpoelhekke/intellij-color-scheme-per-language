@@ -4,13 +4,13 @@ import com.intellij.diff.contents.DiffContent
 import com.intellij.diff.contents.DocumentContent
 import com.intellij.diff.contents.FileContent
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorColorsScheme
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 
@@ -33,9 +33,11 @@ class IntellijColorSchemePlatform(
             else -> null
         }
         val language = virtualFile?.let { file ->
-            ReadAction.compute<_, RuntimeException> {
-                PsiManager.getInstance(project).findFile(file)?.language
-            }
+            ApplicationManager.getApplication().runReadAction(
+                Computable {
+                    PsiManager.getInstance(project).findFile(file)?.language
+                },
+            )
         }
             ?: return null
 
