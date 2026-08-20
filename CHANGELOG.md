@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.5.1...v0.5.2) (2026-08-20)
+
+
+### Bug Fixes
+
+* **diff:** avoid deprecated read action ([78459c5](https://github.com/kpoelhekke/intellij-color-scheme-per-language/commit/78459c56b089975c261ca7fab47f1376ee0944fd))
+
 ## [0.5.1](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.5.0...v0.5.1) (2026-08-20)
 
 
