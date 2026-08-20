@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.5.0...v0.5.1) (2026-08-20)
+
+
+### Bug Fixes
+
+* **diff:** wrap PSI lookup in read action ([4eaa735](https://github.com/kpoelhekke/intellij-color-scheme-per-language/commit/4eaa735c758cb17480e541388c2ebd4892f3eb33))
+
 ## [0.5.0](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.4.2...v0.5.0) (2026-06-19)
 
 
