@@ -1,13 +1,29 @@
 package dev.appelflap.colorschemeperlanguage.platform
 
+import com.intellij.diff.DiffContentFactory
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorColorsScheme
 import com.intellij.openapi.editor.colors.impl.DelegateColorScheme
 import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import java.util.concurrent.Callable
 
 class IntellijColorSchemePlatformTest : BasePlatformTestCase() {
+    fun testDiffContentPsiLookupAcquiresReadAccess() {
+        val psiFile = myFixture.configureByText("sample.txt", "plain text")
+        val content = DiffContentFactory.getInstance().create(project, psiFile.virtualFile)
+        val platform = IntellijColorSchemePlatform(project)
+
+        val context = ApplicationManager.getApplication()
+            .executeOnPooledThread(Callable { platform.contextForDiffContent(content) })
+            .get()
+
+        assertSame(PlainTextLanguage.INSTANCE, context?.language)
+    }
+
     fun testApplySchemeToDisposedEditorDoesNotThrow() {
         val editorFactory = EditorFactory.getInstance()
         val document = editorFactory.createDocument("fun main() = Unit")

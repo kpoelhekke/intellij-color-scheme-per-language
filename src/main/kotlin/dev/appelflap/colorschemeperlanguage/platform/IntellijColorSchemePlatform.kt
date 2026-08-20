@@ -4,6 +4,7 @@ import com.intellij.diff.contents.DiffContent
 import com.intellij.diff.contents.DocumentContent
 import com.intellij.diff.contents.FileContent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorColorsScheme
@@ -31,7 +32,11 @@ class IntellijColorSchemePlatform(
             is DocumentContent -> content.highlightFile ?: FileDocumentManager.getInstance().getFile(content.document)
             else -> null
         }
-        val language = virtualFile?.let { PsiManager.getInstance(project).findFile(it) }?.language
+        val language = virtualFile?.let { file ->
+            ReadAction.compute<_, RuntimeException> {
+                PsiManager.getInstance(project).findFile(file)?.language
+            }
+        }
             ?: return null
 
         return PlatformEditorContext(language = language)
