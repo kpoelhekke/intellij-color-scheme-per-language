@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.3](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.5.2...v0.5.3) (2026-09-21)
+
+
+### Bug Fixes
+
+* **i18n:** replace deprecated DynamicBundle constructor ([7f58f48](https://github.com/kpoelhekke/intellij-color-scheme-per-language/commit/7f58f4821b7883be2f9142b2f319274d9b85da62))
+
 ## [0.5.2](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.5.1...v0.5.2) (2026-08-20)
 
 
