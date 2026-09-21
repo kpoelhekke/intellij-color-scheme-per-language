@@ -7,7 +7,7 @@ import org.jetbrains.annotations.PropertyKey
 @NonNls
 private const val BUNDLE = "messages.ColorSchemePerLanguageBundle"
 
-object ColorSchemePerLanguageBundle : DynamicBundle(BUNDLE) {
+object ColorSchemePerLanguageBundle : DynamicBundle(ColorSchemePerLanguageBundle::class.java, BUNDLE) {
     fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String =
         getMessage(key, *params)
 }
