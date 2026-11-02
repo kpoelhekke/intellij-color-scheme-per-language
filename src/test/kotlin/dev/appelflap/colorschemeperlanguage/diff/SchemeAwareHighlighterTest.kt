@@ -46,12 +46,15 @@ class SchemeAwareHighlighterTest : BasePlatformTestCase() {
         SyntaxHighlighterFactory.getLanguageFactory().addExplicitExtension(TestLanguage, factory, testRootDisposable)
     }
 
-    // Mimics the unified diff highlighter: attributes frozen from another scheme.
+    // Mimics the unified diff highlighter: attributes frozen from another scheme. One token over [0, 1); the
+    // iterator must reach its end, or an editor laying out with this highlighter spins forever on the EDT.
     private class FrozenHighlighter(
         private val attributes: TextAttributes,
         private val token: IElementType?,
     ) : EditorHighlighter {
         override fun createIterator(startOffset: Int): HighlighterIterator = object : HighlighterIterator {
+            private var atEnd = startOffset >= 1
+
             override fun getTextAttributes(): TextAttributes = attributes
 
             override fun getStart(): Int = 0
@@ -60,11 +63,15 @@ class SchemeAwareHighlighterTest : BasePlatformTestCase() {
 
             override fun getTokenType(): IElementType? = token
 
-            override fun advance() = Unit
+            override fun advance() {
+                atEnd = true
+            }
 
-            override fun retreat() = Unit
+            override fun retreat() {
+                atEnd = false
+            }
 
-            override fun atEnd(): Boolean = false
+            override fun atEnd(): Boolean = atEnd
 
             override fun getDocument(): Document = error("unused")
         }
