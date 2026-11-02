@@ -1,7 +1,10 @@
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 import org.jetbrains.changelog.markdownToHTML
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.models.ProductRelease
+import org.jetbrains.intellij.platform.gradle.providers.ProductReleasesValueSource
 
 plugins {
     id("org.jetbrains.kotlin.jvm")
@@ -71,6 +74,29 @@ intellijPlatform {
             recommended()
         }
     }
+}
+
+// Compile against the baseline above, but run the sandbox on the newest stable IDEA release,
+// looked up from JetBrains' release feed (the plugin's "latest" keyword doesn't cover IDEs).
+val latestIdeaRelease = providers.of(ProductReleasesValueSource::class) {
+    parameters {
+        jetbrainsIdesUrl = "https://www.jetbrains.com/updates/updates.xml"
+        androidStudioUrl = "https://jb.gg/android-studio-releases-list.xml"
+        types = listOf(IntelliJPlatformType.IntellijIdea)
+        channels = listOf(ProductRelease.Channel.RELEASE)
+        sinceBuild = "252"
+    }
+}.map { it.first() }
+
+val runIdeLatest = intellijPlatformTesting.runIde.register("runIdeLatest") {
+    type = IntelliJPlatformType.IntellijIdea
+    version = latestIdeaRelease.map { it.substringAfter('-') }
+}
+
+// The built-in runIde always uses the compile target; delegate so `./gradlew runIde` boots latest.
+tasks.runIde {
+    enabled = false
+    dependsOn(runIdeLatest.flatMap { it.task })
 }
 
 detekt {
