@@ -40,7 +40,7 @@ IntelliJ IDEA 2025.2 or newer. Other IntelliJ-based IDEs are not officially veri
 ```bash
 ./gradlew check        # lint (detekt) + tests
 ./gradlew buildPlugin  # build the distributable zip
-./gradlew runIde       # launch a sandbox IDE with the plugin
+./gradlew runIde       # launch a sandbox IDE (latest stable IntelliJ IDEA) with the plugin
 ```
 
 The section of this README between the `<!-- Plugin description -->` markers is extracted at build time and becomes the JetBrains Marketplace listing — keep it self-contained.
