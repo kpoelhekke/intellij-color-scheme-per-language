@@ -6,6 +6,7 @@ import com.intellij.diff.EditorDiffViewer
 import com.intellij.diff.FrameDiffTool
 import com.intellij.diff.requests.ContentDiffRequest
 import com.intellij.diff.requests.DiffRequest
+import com.intellij.openapi.editor.ex.EditorEx
 import dev.appelflap.colorschemeperlanguage.platform.IntellijColorSchemePlatform
 import dev.appelflap.colorschemeperlanguage.runtime.ColorSchemeApplier
 import dev.appelflap.colorschemeperlanguage.settings.ColorSchemeSettingsState
@@ -36,6 +37,7 @@ class DiffColorSchemeExtension : DiffExtension() {
 
         editors.forEachIndexed { index, editor ->
             applier.applyForEditor(editor, contexts.getOrNull(index))
+            (editor as? EditorEx)?.let { SchemeAwareHighlighter.installIfUnified(viewer, it) }
         }
     }
 }

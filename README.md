@@ -7,7 +7,7 @@
 
 - Map any language to any installed editor color scheme.
 - Schemes apply automatically as you open files and switch between editor tabs.
-- Diff viewers get the same per-language schemes as regular editors, and merge or preview views are covered when the IDE creates them as ordinary editors.
+- Diff viewers get the same per-language schemes as regular editors, in both side-by-side and unified mode (including syntax colors), and merge or preview views are covered when the IDE creates them as ordinary editors.
 - Languages without a rule keep your default color scheme (`Settings | Editor | Color Scheme`).
 - The editor font follows your main theme unless the per-language scheme defines its own font.
 - One checkbox disables the plugin without losing your rules.
