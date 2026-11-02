@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.4](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.5.3...v0.5.4) (2026-11-02)
+
+
+### Bug Fixes
+
+* **diff:** avoid IDE errors and experimental API in unified diff colors ([4120da1](https://github.com/kpoelhekke/intellij-color-scheme-per-language/commit/4120da1fd0a0a560aeb96a6b45bcc4a7a4eb67c3))
+* **diff:** keep per-language syntax colors in the unified diff viewer ([bdb7f02](https://github.com/kpoelhekke/intellij-color-scheme-per-language/commit/bdb7f024484e5c48996b47b8c826351caf0b6d1c))
+
 ## [0.5.3](https://github.com/kpoelhekke/intellij-color-scheme-per-language/compare/v0.5.2...v0.5.3) (2026-09-21)
 
 
